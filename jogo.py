@@ -1,15 +1,15 @@
+import random
 from turtle import up
-import pygame , random
+
+import pygame
 from pygame.locals import *
 
-WIDTH = 400
-HEIGHT = 600
+WIDTH = 500
+HEIGHT = 700
 SPEED = 10
-GAME_SPEED = 10
-GROUND_WIDTH = 2*WIDTH
-GROUND_HEIGHT = 100
+GAME_SPEED = 0
 PIPE_WIDTH = 120
-PIPE_HEIGHT = 500
+PIPE_HEIGHT = 600
 PIPE_GAP = 100
 
 
@@ -18,20 +18,20 @@ class Nave(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
-        self.images = [pygame.image.load(),
-                       pygame.image.load(),
-                       pygame.image.load()]
+        self.images = [pygame.image.load('bluebird-upflap.png'),
+                       pygame.image.load('bluebird-midflap.png'),
+                       pygame.image.load('bluebird-downflap.png')]
 
         self.current_image = 0
 
         self.speed = SPEED
 
-        self.image = pygame.image.load()
+        self.image = pygame.image.load('bluebird-upflap.png')
         self.mask = pygame.mask.from_surface(self.image)
 
 
         self.rect = self.image.get_rect()
-        self.rect[0] = WIDTH/2
+        self.rect[0] = 1
         self.rect[1] = HEIGHT/2
         
 
@@ -52,11 +52,12 @@ class Nave(pygame.sprite.Sprite):
         self.rect[0] -= 10
 
 class Pipe(pygame.sprite.Sprite):
+    global GAME_SPEED
 
     def __init__(self, inverted, xpos, ysize):
         pygame.sprite.Sprite.__init__(self)
 
-        self.image = pygame.image.load().convert_alpha()
+        self.image = pygame.image.load('pipe-green.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (PIPE_WIDTH, PIPE_HEIGHT))
 
         self.rect = self.image.get_rect()
@@ -74,27 +75,8 @@ class Pipe(pygame.sprite.Sprite):
         self.rect[0] -= GAME_SPEED
 
 
-        
-
-class Ground(pygame.sprite.Sprite):
-
-    def __init__(self, xpos):
-        pygame.sprite.Sprite.__init__(self)
-
-        self.image = pygame.image.load()
-        self.image = pygame.transform.scale(self.image, (GROUND_WIDTH, GROUND_HEIGHT))
-
-        self.mask = pygame.mask.from_surface(self.image)
-
-        self.rect = self.image.get_rect()
-        self.rect[0] = xpos
-        self.rect[1] = HEIGHT - GROUND_HEIGHT
-
-    def update(self):
-        self.rect[0] -= GAME_SPEED
-
 def random_pipes(xpos):
-    size = random.randint(100,250)
+    size = random.randint(150,550)
     pipe = Pipe(False, xpos, size)
     pipe_inverted = Pipe(True , xpos, HEIGHT - size - PIPE_GAP)
     return (pipe, pipe_inverted)
@@ -103,86 +85,110 @@ def random_pipes(xpos):
 def off_screen(sprite):
     return sprite.rect[0] < -(sprite.rect[2])
 
+def createText(msg, color, tam):
+    font = pygame.font.SysFont(None, tam)
+    texto1 = font.render(msg, True, color)
+    return texto1
+
+def resetGame():
+    global score, colisao, colidiu
+    colidiu = False
+    colisao = False
+    score = 0
+    nave.rect[0] = 1
+    nave.rect[1] = HEIGHT/2
+    pipe_group.remove(pipe_group.sprites()[0])
+    pipe_group.remove(pipe_group.sprites()[0])
+    pipes = random_pipes(WIDTH * 2)
+    pipe_group.add(pipes[0])
+    pipe_group.add(pipes[1])
+    pipe_group.update()
+    pipe_group.draw(screen)
+
 pygame.init()
+
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-
-BACKGROUND = pygame.image.load()
+menuImg = pygame.image.load('Menu_screen.jpg')
+gameover = pygame.image.load('gameover.png')
+BACKGROUND = pygame.image.load('image.png')
 BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-
+JBACKGROUND = pygame.image.load('background-day.png')
+JBACKGROUND = pygame.transform.scale(JBACKGROUND, (WIDTH, HEIGHT))
 nave_group = pygame.sprite.Group()
-nave = Nave()
-nave_group.add(nave)
-
-ground_group = pygame.sprite.Group()
-for i in range(2):
-    ground = Ground(GROUND_WIDTH*i)
-    ground_group.add(ground)
-
+fonte = pygame.font.SysFont("arial", 25, False, False)
 pipe_group = pygame.sprite.Group()
 for i in range(2):
-    pipes = random_pipes(WIDTH * i + 600)
+    pipes = random_pipes(WIDTH * i + 700)
     pipe_group.add(pipes[0])
     pipe_group.add(pipes[1])
 
 
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+score = 0
+colisao = False
+colidiu = False
+exit = True
+nave = Nave()
+
 clock = pygame.time.Clock()
+pygame.display.set_caption("Star Travel")
+screen.blit(menuImg, (0, 0))
 
-while True:
-    clock.tick(30)
+while exit:
+    if colidiu == False:
+        clock.tick(25)
+        mensagem = f'Score: {score}'
+        texto_formatado = fonte.render(mensagem, True, (255,255,255))       
 
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_UP]:
-          nave.up()
-    if keys[pygame.K_DOWN]:
-        nave.down()
-    if keys[pygame.K_RIGHT]:
-        nave.right()
-    if keys[pygame.K_LEFT]:
-        nave.left()
-
-
+    if currentScreen == "Game":
+        nave_group.add(nave)
+        if colidiu == False:
+            GAME_SPEED = 10
+            score+=1
+            screen.blit(JBACKGROUND, (0, 0))
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_UP]:
+                  nave.up()
+            if keys[pygame.K_DOWN]:
+                nave.down()
+            if keys[pygame.K_RIGHT]:
+                nave.right()
+            if keys[pygame.K_LEFT]:
+                nave.left()
+        
     for event in pygame.event.get():
         if event.type == QUIT:
-            pygame.quit()
-
-        
-
+            exit = False
         if event.type == KEYDOWN:
-            if event.key == K_DOWN:
-                nave.down()
-            if event.key == K_UP:
-                nave.up()
-            if event.key == K_RIGHT:
-                nave.right()
-            if event.key == K_LEFT:
-                nave.left()
+            if event.key == K_r:
+                resetGame()
 
-    screen.blit(BACKGROUND, (0, 0))
+    colisao = (pygame.sprite.groupcollide(nave_group, pipe_group, False, False, pygame.sprite.collide_mask))
 
-    if off_screen(ground_group.sprites()[0]):
-        ground_group.remove(ground_group.sprites()[0])
-        new_ground = Ground(GROUND_WIDTH - 20)
-        ground_group.add(new_ground)
+    if(colisao):
+        colidiu = True
+           
+    if(colidiu):
+        if ChangeMenu() == "Start":
+            resetGame()
+        elif ChangeMenu() == "Exit":
+            exit = False
+        screen.blit(menuImg, (0, 0))
+        printDeath()
+    else:
+        if off_screen(pipe_group.sprites()[0]):
+            pipe_group.remove(pipe_group.sprites()[0])
+            pipe_group.remove(pipe_group.sprites()[0])
+            pipes = random_pipes(WIDTH * 2)
 
-    if off_screen(pipe_group.sprites()[0]):
-        pipe_group.remove(pipe_group.sprites()[0])
-        pipe_group.remove(pipe_group.sprites()[0])
-        pipes = random_pipes(WIDTH * 2)
+            pipe_group.add(pipes[0])
+            pipe_group.add(pipes[1])
 
-        pipe_group.add(pipes[0])
-        pipe_group.add(pipes[1])
+        nave_group.update()
+        pipe_group.update()
 
-    nave_group.update()
-    ground_group.update()
-    pipe_group.update()
-
-    nave_group.draw(screen)
-    pipe_group.draw(screen)
-    ground_group.draw(screen)
+        nave_group.draw(screen)
+        pipe_group.draw(screen)
+        screen.blit(texto_formatado, (0, 0))
     
-
-    if (pygame.sprite.groupcollide(nave_group, ground_group, False, False, pygame.sprite.collide_mask) or pygame.sprite.groupcollide(nave_group, pipe_group, False, False, pygame.sprite.collide_mask)):
-        break
-
-
     pygame.display.update()
