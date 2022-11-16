@@ -18,15 +18,15 @@ class Nave(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
-        self.images = [pygame.image.load('bluebird-upflap.png'),
-                       pygame.image.load('bluebird-midflap.png'),
-                       pygame.image.load('bluebird-downflap.png')]
+        self.images = [pygame.image.load('spaceship1.png'),
+                       pygame.image.load('spaceship2.png'),
+                       pygame.image.load('spaceship3.png')]
 
         self.current_image = 0
 
         self.speed = SPEED
 
-        self.image = pygame.image.load('bluebird-upflap.png')
+        self.image = pygame.image.load('spaceship1.png')
         self.mask = pygame.mask.from_surface(self.image)
 
 
@@ -57,7 +57,7 @@ class Pipe(pygame.sprite.Sprite):
     def __init__(self, inverted, xpos, ysize):
         pygame.sprite.Sprite.__init__(self)
 
-        self.image = pygame.image.load('pipe-green.png').convert_alpha()
+        self.image = pygame.image.load('pipe.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (PIPE_WIDTH, PIPE_HEIGHT))
 
         self.rect = self.image.get_rect()
@@ -91,28 +91,26 @@ def createText(msg, color, tam):
     return texto1
 
 def resetGame():
-    global score, colisao, colidiu
+    global score, colisao, colidiu, SPEED
+    SPEED = 10
     colidiu = False
     colisao = False
     score = 0
     nave.rect[0] = 1
     nave.rect[1] = HEIGHT/2
-    pipe_group.remove(pipe_group.sprites()[0])
-    pipe_group.remove(pipe_group.sprites()[0])
-    pipes = random_pipes(WIDTH * 2)
-    pipe_group.add(pipes[0])
-    pipe_group.add(pipes[1])
+    pipe_group.empty()
+    for i in range(2):
+        pipes = random_pipes(WIDTH * i + 700)
+        pipe_group.add(pipes[0])
+        pipe_group.add(pipes[1])
     pipe_group.update()
     pipe_group.draw(screen)
 
 pygame.init()
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-menuImg = pygame.image.load('Menu_screen.jpg')
-gameover = pygame.image.load('gameover.png')
-BACKGROUND = pygame.image.load('image.png')
-BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-JBACKGROUND = pygame.image.load('background-day.png')
+
+JBACKGROUND = pygame.image.load('space.png')
 JBACKGROUND = pygame.transform.scale(JBACKGROUND, (WIDTH, HEIGHT))
 nave_group = pygame.sprite.Group()
 fonte = pygame.font.SysFont("arial", 25, False, False)
@@ -132,7 +130,6 @@ nave = Nave()
 
 clock = pygame.time.Clock()
 pygame.display.set_caption("Star Travel")
-screen.blit(menuImg, (0, 0))
 
 while exit:
     if colidiu == False:
@@ -169,12 +166,8 @@ while exit:
         colidiu = True
            
     if(colidiu):
-        if ChangeMenu() == "Start":
-            resetGame()
-        elif ChangeMenu() == "Exit":
-            exit = False
-        screen.blit(menuImg, (0, 0))
-        printDeath()
+        break;
+
     else:
         if off_screen(pipe_group.sprites()[0]):
             pipe_group.remove(pipe_group.sprites()[0])
