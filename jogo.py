@@ -13,20 +13,47 @@ PIPE_HEIGHT = 600
 PIPE_GAP = 100
 
 
+def printDeath():
+    global score
+    screen.blit(gameover, (WIDTH/2, HEIGHT/2))
+    mensagem1 = f'Score: {score}'
+    scorePrint = fonte.render(mensagem1, (255,255,255) , 30)
+    screen.blit(scorePrint, (200, 300))
+    
+def ChangeMenu():
+    mx, my = pygame.mouse.get_pos()
+    if pygame.mouse.get_pressed() == (1, 0, 0):
+        if 85 <= mx and mx <= 210 and 400 <= my and my <= 520:
+            return "Start"
+        elif 160 <= mx and mx <= 285 and 545 <= my and my <= 670:
+            return "Exit"
+        elif 255 <= mx and mx <= 388 and 400 <= my and my <= 525:
+            return "Tutorial"
+        elif 17 <= mx and mx <= 100 and 610 <= my and my <= 680:
+            return "ReturnMenu"
+
+def telaMorte():
+    mx, my = pygame.mouse.get_pos()
+    if pygame.mouse.get_pressed() == (1, 0, 0):
+        if 85 <= mx and mx <= 210 and 400 <= my and my <= 520:
+            return "Start"
+        elif 160 <= mx and mx <= 285 and 545 <= my and my <= 670:
+            return "Exit"
+
 class Nave(pygame.sprite.Sprite):
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
-        self.images = [pygame.image.load('spaceship1.png'),
-                       pygame.image.load('spaceship2.png'),
-                       pygame.image.load('spaceship3.png')]
+        self.images = [pygame.image.load('bluebird-upflap.png'),
+                       pygame.image.load('bluebird-midflap.png'),
+                       pygame.image.load('bluebird-downflap.png')]
 
         self.current_image = 0
 
         self.speed = SPEED
 
-        self.image = pygame.image.load('spaceship1.png')
+        self.image = pygame.image.load('bluebird-upflap.png')
         self.mask = pygame.mask.from_surface(self.image)
 
 
@@ -57,7 +84,7 @@ class Pipe(pygame.sprite.Sprite):
     def __init__(self, inverted, xpos, ysize):
         pygame.sprite.Sprite.__init__(self)
 
-        self.image = pygame.image.load('pipe.png').convert_alpha()
+        self.image = pygame.image.load('pipe-green.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (PIPE_WIDTH, PIPE_HEIGHT))
 
         self.rect = self.image.get_rect()
@@ -91,11 +118,12 @@ def createText(msg, color, tam):
     return texto1
 
 def resetGame():
-    global score, colisao, colidiu, SPEED
+    global score, colisao, colidiu, SPEED, telaAtual
     SPEED = 10
     colidiu = False
     colisao = False
     score = 0
+    telaAtual = 0
     nave.rect[0] = 1
     nave.rect[1] = HEIGHT/2
     pipe_group.empty()
@@ -109,8 +137,11 @@ def resetGame():
 pygame.init()
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-
-JBACKGROUND = pygame.image.load('space.png')
+menuImg = pygame.image.load('Menu_screen.jpg')
+gameover = pygame.image.load('gameover.png')
+BACKGROUND = pygame.image.load('image.png')
+BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
+JBACKGROUND = pygame.image.load('background-day.png')
 JBACKGROUND = pygame.transform.scale(JBACKGROUND, (WIDTH, HEIGHT))
 nave_group = pygame.sprite.Group()
 fonte = pygame.font.SysFont("arial", 25, False, False)
@@ -127,15 +158,26 @@ colisao = False
 colidiu = False
 exit = True
 nave = Nave()
-
+currentScreen = "Menu"
 clock = pygame.time.Clock()
 pygame.display.set_caption("Star Travel")
+screen.blit(menuImg, (0, 0))
 
 while exit:
     if colidiu == False:
         clock.tick(25)
         mensagem = f'Score: {score}'
-        texto_formatado = fonte.render(mensagem, True, (255,255,255))       
+        texto_formatado = fonte.render(mensagem, True, (255,255,255))
+        if ChangeMenu() == "Exit" and currentScreen == "Menu":
+            exit = False
+        elif ChangeMenu() == "Start" and currentScreen == "Menu":
+            currentScreen = "Game"
+        elif ChangeMenu() == "Tutorial" and currentScreen == "Menu":
+            currentScreen = "Tutorial"
+            screen.blit(TutorialImg, (0, 0))
+        elif ChangeMenu() == "ReturnMenu" and currentScreen == "Tutorial":
+            currentScreen = "Menu"
+            screen.blit(menuImg, (0, 0))
 
     if currentScreen == "Game":
         nave_group.add(nave)
@@ -166,8 +208,12 @@ while exit:
         colidiu = True
            
     if(colidiu):
-        break;
-
+        if ChangeMenu() == "Start":
+            resetGame()
+        elif ChangeMenu() == "Exit":
+            exit = False
+        screen.blit(menuImg, (0, 0))
+        printDeath()
     else:
         if off_screen(pipe_group.sprites()[0]):
             pipe_group.remove(pipe_group.sprites()[0])
