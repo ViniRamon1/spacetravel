@@ -32,14 +32,6 @@ def ChangeMenu():
         elif 17 <= mx and mx <= 100 and 610 <= my and my <= 680:
             return "ReturnMenu"
 
-def telaMorte():
-    mx, my = pygame.mouse.get_pos()
-    if pygame.mouse.get_pressed() == (1, 0, 0):
-        if 85 <= mx and mx <= 210 and 400 <= my and my <= 520:
-            return "Start"
-        elif 160 <= mx and mx <= 285 and 545 <= my and my <= 670:
-            return "Exit"
-
 class Nave(pygame.sprite.Sprite):
 
     def __init__(self):
