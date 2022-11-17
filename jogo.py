@@ -40,6 +40,46 @@ def telaMorte():
         elif 160 <= mx and mx <= 285 and 545 <= my and my <= 670:
             return "Exit"
 
+class Opening(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+
+        self.images = [pygame.image.load('opening1.png'),pygame.image.load('opening2.png'),pygame.image.load('opening3.png'),pygame.image.load('opening4.png'),pygame.image.load('opening5.png'),pygame.image.load('opening6.png'),pygame.image.load('opening7.png'),pygame.image.load('opening8.png'),pygame.image.load('opening9.png'),pygame.image.load('opening10.png'),pygame.image.load('opening11.png'),pygame.image.load('opening12.png'),pygame.image.load('opening13.png'),pygame.image.load('opening14.png'),pygame.image.load('opening15.png'),pygame.image.load('opening16.png'),pygame.image.load('opening17.png'),pygame.image.load('opening18.png'),pygame.image.load('opening19.png'),pygame.image.load('opening20.png'),pygame.image.load('opening21.png'),pygame.image.load('opening22.png'),pygame.image.load('opening23.png'),pygame.image.load('opening24.png'),pygame.image.load('opening25.png')]
+
+        self.current_image = 0
+
+        self.image = pygame.image.load('opening1.png')
+        self.mask = pygame.mask.from_surface(self.image)
+
+        self.rect = self.image.get_rect()
+        self.rect[0] = 0
+        self.rect[1] = 0
+
+    def update(self):
+        self.current_image = (self.current_image + 1) % 25
+        self.image = self.images[ self.current_image ]
+
+class Menu(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+
+        self.images = [pygame.image.load('menu1.png'),
+                       pygame.image.load('menu2.png'),
+                       pygame.image.load('menu3.png')]
+        
+        self.current_image = 0
+
+        self.image = pygame.image.load('menu1.png')
+        self.mask = pygame.mask.from_surface(self.image)
+
+        self.rect = self.image.get_rect()
+        self.rect[0] = 0
+        self.rect[1] = 0
+
+    def update(self):
+        self.current_image = (self.current_image + 1) % 3
+        self.image = self.images[ self.current_image ]
+
 class Nave(pygame.sprite.Sprite):
 
     def __init__(self):
@@ -158,7 +198,7 @@ colisao = False
 colidiu = False
 exit = True
 nave = Nave()
-currentScreen = "Menu"
+currentScreen = "Abertura"
 clock = pygame.time.Clock()
 pygame.display.set_caption("Star Travel")
 screen.blit(menuImg, (0, 0))
@@ -168,6 +208,22 @@ while exit:
         clock.tick(25)
         mensagem = f'Score: {score}'
         texto_formatado = fonte.render(mensagem, True, (255,255,255))
+
+        if currentScreen == "Abertura":
+            opening_group.add(opening)
+            opening_group.draw(screen)
+            opening_group.update()
+            screen.blit(texto_Opening, (100,400))
+            for event in pygame.event.get():
+                if event.type == KEYDOWN:
+                    if event.key == K_SPACE:
+                        currentScreen = "Menu"
+
+        if currentScreen == "Menu":
+            menu_group.add(menu)
+            menu_group.draw(screen)
+            menu_group.update()
+
         if ChangeMenu() == "Exit" and currentScreen == "Menu":
             exit = False
         elif ChangeMenu() == "Start" and currentScreen == "Menu":
