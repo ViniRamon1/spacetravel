@@ -1,3 +1,4 @@
+#imporar bibliotecas
 import random
 from turtle import up
 
@@ -6,6 +7,11 @@ from pygame.locals import *
 
 pygame.init()
 
+#soundtrack
+musicadefundo = pygame.mixer.music.load('musica.mp3')
+pygame.mixer.music.play(-1)
+
+#Variaveis Padrão
 WIDTH = 500
 HEIGHT = 700
 SPEED = 10
@@ -18,6 +24,19 @@ colisao = False
 colidiu = False
 exit = True
 
+#Imagens
+menuImg = pygame.image.load('menu1.png')
+menuImg1 = pygame.image.load('menu2.png')
+menuImg2 = pygame.image.load('menu3.png')
+TutorialImg = pygame.image.load('instructions1.png')
+gameover = pygame.image.load('gameover.png')
+JBACKGROUND = pygame.image.load('space.png')
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+JBACKGROUND = pygame.transform.scale(JBACKGROUND, (WIDTH, HEIGHT))
+
+#Funcoes
+
+#funcao menu, botoes: start, minitutorial, exit e para retornar menu
 def ChangeMenu():
     mx, my = pygame.mouse.get_pos()
     if pygame.mouse.get_pressed() == (1, 0, 0):
@@ -30,6 +49,7 @@ def ChangeMenu():
         elif 17 <= mx and mx <= 100 and 610 <= my and my <= 680:
             return "ReturnMenu"
 
+#menu pos morte, com restart e exit
 def telaMorte():
     mx, my = pygame.mouse.get_pos()
     if pygame.mouse.get_pressed() == (1, 0, 0):
@@ -38,6 +58,7 @@ def telaMorte():
         elif 275 <= mx and mx <= 365 and 420 <= my and my <= 500:
             return "Exit"
 
+#Abertura animada
 class Opening(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -57,6 +78,7 @@ class Opening(pygame.sprite.Sprite):
         self.current_image = (self.current_image + 1) % 25
         self.image = self.images[ self.current_image ]
 
+#menu com animação de entrada
 class Menu(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -78,6 +100,7 @@ class Menu(pygame.sprite.Sprite):
         self.current_image = (self.current_image + 1) % 3
         self.image = self.images[ self.current_image ]
 
+#nave e animação
 class Nave(pygame.sprite.Sprite):
 
     def __init__(self):
@@ -114,6 +137,7 @@ class Nave(pygame.sprite.Sprite):
     def left(self):
         self.rect[0] -= SPEED
 
+#canos
 class Pipe(pygame.sprite.Sprite):
     global GAME_SPEED
 
@@ -138,20 +162,24 @@ class Pipe(pygame.sprite.Sprite):
         self.rect[0] -= GAME_SPEED
 
 
+#funcao para aleatorizar a geração de canos
 def random_pipes(xpos):
     size = random.randint(150,550)
     pipe = Pipe(False, xpos, size)
     pipe_inverted = Pipe(True , xpos, HEIGHT - size - PIPE_GAP)
     return (pipe, pipe_inverted)
 
+#funcao que detecta quando algo esta fora da tela
 def off_screen(sprite):
     return sprite.rect[0] < -(sprite.rect[2])
 
+#funcao para criar texto
 def createText(msg, color, tam):
     font = pygame.font.SysFont(None, tam)
     texto1 = font.render(msg, True, color)
     return texto1
 
+#funcao para resetar o game
 def resetGame():
     global score, colisao, colidiu, SPEED, telaAtual
     SPEED = 10
@@ -169,19 +197,13 @@ def resetGame():
     pipe_group.update()
     pipe_group.draw(screen)
 
-
-menuImg = pygame.image.load('menu1.png')
-menuImg1 = pygame.image.load('menu2.png')
-menuImg2 = pygame.image.load('menu3.png')
-TutorialImg = pygame.image.load('instructions1.png')
-gameover = pygame.image.load('gameover.png')
-JBACKGROUND = pygame.image.load('space.png')
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-JBACKGROUND = pygame.transform.scale(JBACKGROUND, (WIDTH, HEIGHT))
+#Texto
 pygame.display.set_caption("Space Travel")
 fonte = pygame.font.SysFont("arial", 25, False, False)
 mensagemOpening = f'Pressione Espaço para continuar'
 texto_Opening = fonte.render(mensagemOpening, True , (255,255,255))
+
+#Variaveis e funcoes para o jogo funcionar
 currentScreen = "Abertura" #tela padrao
 opening_group = pygame.sprite.Group()
 nave_group = pygame.sprite.Group()
@@ -192,11 +214,13 @@ nave = Nave()
 menu = Menu()
 opening = Opening()
 
+#Gerar canos
 for i in range(2):
     pipes = random_pipes(WIDTH * i + 700)
     pipe_group.add(pipes[0])
     pipe_group.add(pipes[1])
 
+#jogo
 while exit:
     if colidiu == False:
         clock.tick(25)
