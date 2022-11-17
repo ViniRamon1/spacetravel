@@ -179,14 +179,19 @@ while exit:
             currentScreen = "Menu"
             screen.blit(menuImg, (0, 0))
 
-        
-
     if currentScreen == "Game":
         nave_group.add(nave)
         if colidiu == False:
             GAME_SPEED = 10
+            if score >= 1000:
+                SPEED = 15
+                GAME_SPEED = 15
+            if score >= 2500:
+                SPEED = 20
+                GAME_SPEED = 20
             score+=1
             screen.blit(JBACKGROUND, (0, 0))
+            screen.blit(texto_formatado, (0, 0))
             keys = pygame.key.get_pressed()
             if keys[pygame.K_UP]:
                   nave.up()
@@ -201,8 +206,12 @@ while exit:
         if event.type == QUIT:
             exit = False
         if event.type == KEYDOWN:
-            if event.key == K_r:
+            if event.key == K_x:
                 resetGame()
+                score = 1000
+            if event.key == K_z:
+                resetGame()
+                score = 2500
 
     colisao = (pygame.sprite.groupcollide(nave_group, pipe_group, False, False, pygame.sprite.collide_mask))
 
