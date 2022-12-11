@@ -117,8 +117,7 @@ class Nave(pygame.sprite.Sprite):
 
 
         self.rect = self.image.get_rect()
-        self.rect[0] = 1
-        self.rect[1] = HEIGHT/2
+        posicionar(self)
         
 
     def update(self):
@@ -173,11 +172,19 @@ def random_pipes(xpos):
 def off_screen(sprite):
     return sprite.rect[0] < -(sprite.rect[2])
 
-#funcao para criar texto
-def createText(msg, color, tam):
-    font = pygame.font.SysFont(None, tam)
-    texto1 = font.render(msg, True, color)
-    return texto1
+def off_screen_aux():
+    pipe_group.remove(pipe_group.sprites()[0])
+    pipe_group.remove(pipe_group.sprites()[0])
+    pipes = random_pipes(WIDTH * 2)
+
+    pipe_group.add(pipes[0])
+    pipe_group.add(pipes[1])
+
+def gerar_canos():
+    for i in range(2):
+        pipes = random_pipes(WIDTH * i + 700)
+        pipe_group.add(pipes[0])
+        pipe_group.add(pipes[1])
 
 #funcao para resetar o game
 def resetGame():
@@ -187,15 +194,15 @@ def resetGame():
     colisao = False
     score = 0
     telaAtual = 0
-    nave.rect[0] = 1
-    nave.rect[1] = HEIGHT/2
+    posicionar(nave)
     pipe_group.empty()
-    for i in range(2):
-        pipes = random_pipes(WIDTH * i + 700)
-        pipe_group.add(pipes[0])
-        pipe_group.add(pipes[1])
+    gerar_canos()
     pipe_group.update()
     pipe_group.draw(screen)
+
+def posicionar(self):
+    self.rect[0] = 1
+    self.rect[1] = HEIGHT/2
 
 #Texto
 pygame.display.set_caption("Space Travel")
@@ -215,10 +222,7 @@ menu = Menu()
 opening = Opening()
 
 #Gerar canos
-for i in range(2):
-    pipes = random_pipes(WIDTH * i + 700)
-    pipe_group.add(pipes[0])
-    pipe_group.add(pipes[1])
+gerar_canos()
 
 #jogo
 while exit:
@@ -270,22 +274,16 @@ while exit:
             screen.blit(texto_formatado, (0, 0))
             keys = pygame.key.get_pressed()
             if keys[pygame.K_UP]:
-                  nave.up()
+                nave.up()
             if keys[pygame.K_DOWN]:
                 nave.down()
             if keys[pygame.K_RIGHT]:
                 nave.right()
             if keys[pygame.K_LEFT]:
                 nave.left()
-            if keys[pygame.K_w]:
-                  nave.up()
-            if keys[pygame.K_s]:
-                nave.down()
-            if keys[pygame.K_d]:
-                nave.right()
-            if keys[pygame.K_a]:
-                nave.left()
+
         
+
     for event in pygame.event.get():
         if event.type == QUIT:
             exit = False
@@ -312,12 +310,7 @@ while exit:
         screen.blit(texto_formatado, (200, 300))
     else:
         if off_screen(pipe_group.sprites()[0]):
-            pipe_group.remove(pipe_group.sprites()[0])
-            pipe_group.remove(pipe_group.sprites()[0])
-            pipes = random_pipes(WIDTH * 2)
-
-            pipe_group.add(pipes[0])
-            pipe_group.add(pipes[1])
+            off_screen_aux()
 
         nave_group.update()
         pipe_group.update()
