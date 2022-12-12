@@ -8,8 +8,8 @@ from pygame.locals import *
 pygame.init()
 
 #soundtrack
-musicadefundo = pygame.mixer.music.load('musica.mp3')
-pygame.mixer.music.play(-1)
+#musicadefundo = pygame.mixer.music.load('musica.mp3')
+#pygame.mixer.music.play(-1)
 
 #Variaveis Padrão
 WIDTH = 500
@@ -204,6 +204,44 @@ def posicionar(self):
     self.rect[0] = 1
     self.rect[1] = HEIGHT/2
 
+#adiciona teclas de atalho para pular de dificuldade 
+def atalho():
+    global score
+    for event in pygame.event.get():
+        if event.type == KEYDOWN:
+            if event.key == K_x:
+                resetGame()
+                score = 1000 #media
+            if event.key == K_z:
+                resetGame()
+                score = 2500 #dificil
+
+#funcao para mover a nave
+def movernave():
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_UP] or keys[pygame.K_w]:
+        nave.up()
+    if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+        nave.down()
+    if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        nave.right()
+    if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+        nave.left()
+
+#funcao para iniciar abertura
+def oppening():
+    global exit, currentScreen
+    opening_group.add(opening)
+    opening_group.draw(screen)
+    opening_group.update()
+    screen.blit(texto_Opening, (100,400))
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            exit = False
+        if event.type == KEYDOWN:
+            if event.key == K_SPACE:
+                currentScreen = "Menu"
+
 #Texto
 pygame.display.set_caption("Space Travel")
 fonte = pygame.font.SysFont("arial", 25, False, False)
@@ -232,16 +270,7 @@ while exit:
         texto_formatado = fonte.render(mensagem, True, (255,255,255))
 
         if currentScreen == "Abertura":
-            opening_group.add(opening)
-            opening_group.draw(screen)
-            opening_group.update()
-            screen.blit(texto_Opening, (100,400))
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    exit = False
-                if event.type == KEYDOWN:
-                    if event.key == K_SPACE:
-                        currentScreen = "Menu"
+            oppening()
 
         if currentScreen == "Menu":
             menu_group.add(menu)
@@ -272,29 +301,12 @@ while exit:
             score+=1
             screen.blit(JBACKGROUND, (0, 0))
             screen.blit(texto_formatado, (0, 0))
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_UP]:
-                nave.up()
-            if keys[pygame.K_DOWN]:
-                nave.down()
-            if keys[pygame.K_RIGHT]:
-                nave.right()
-            if keys[pygame.K_LEFT]:
-                nave.left()
-
-        
+            movernave()
+            atalho()
 
     for event in pygame.event.get():
         if event.type == QUIT:
             exit = False
-        if event.type == KEYDOWN:
-            if event.key == K_x:
-                resetGame()
-                score = 1000
-            if event.key == K_z:
-                resetGame()
-                score = 2500
-
 
     colisao = (pygame.sprite.groupcollide(nave_group, pipe_group, False, False, pygame.sprite.collide_mask))
 
