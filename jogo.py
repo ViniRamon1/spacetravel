@@ -8,8 +8,8 @@ from pygame.locals import *
 pygame.init()
 
 #soundtrack
-#musicadefundo = pygame.mixer.music.load('musica.mp3')
-#pygame.mixer.music.play(-1)
+musicadefundo = pygame.mixer.music.load('documentos/musica.mp3')
+pygame.mixer.music.play(-1)
 
 #Variaveis Padrão
 WIDTH = 500
@@ -25,12 +25,12 @@ colidiu = False
 exit = True
 
 #Imagens
-menuImg = pygame.image.load('menu1.png')
-menuImg1 = pygame.image.load('menu2.png')
-menuImg2 = pygame.image.load('menu3.png')
-TutorialImg = pygame.image.load('instructions1.png')
-gameover = pygame.image.load('gameover.png')
-JBACKGROUND = pygame.image.load('space.png')
+menuImg = pygame.image.load('documentos/menu1.png')
+menuImg1 = pygame.image.load('documentos/menu2.png')
+menuImg2 = pygame.image.load('documentos/menu3.png')
+TutorialImg = pygame.image.load('documentos/instructions1.png')
+gameover = pygame.image.load('documentos/gameover.png')
+JBACKGROUND = pygame.image.load('documentos/space.png')
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 JBACKGROUND = pygame.transform.scale(JBACKGROUND, (WIDTH, HEIGHT))
 
@@ -63,11 +63,11 @@ class Opening(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
-        self.images = [pygame.image.load('opening1.png'),pygame.image.load('opening2.png'),pygame.image.load('opening3.png'),pygame.image.load('opening4.png'),pygame.image.load('opening5.png'),pygame.image.load('opening6.png'),pygame.image.load('opening7.png'),pygame.image.load('opening8.png'),pygame.image.load('opening9.png'),pygame.image.load('opening10.png'),pygame.image.load('opening11.png'),pygame.image.load('opening12.png'),pygame.image.load('opening13.png'),pygame.image.load('opening14.png'),pygame.image.load('opening15.png'),pygame.image.load('opening16.png'),pygame.image.load('opening17.png'),pygame.image.load('opening18.png'),pygame.image.load('opening19.png'),pygame.image.load('opening20.png'),pygame.image.load('opening21.png'),pygame.image.load('opening22.png'),pygame.image.load('opening23.png'),pygame.image.load('opening24.png'),pygame.image.load('opening25.png')]
+        self.images = [pygame.image.load('documentos/opening1.png'),pygame.image.load('documentos/opening2.png'),pygame.image.load('documentos/opening3.png'),pygame.image.load('documentos/opening4.png'),pygame.image.load('documentos/opening5.png'),pygame.image.load('documentos/opening6.png'),pygame.image.load('documentos/opening7.png'),pygame.image.load('documentos/opening8.png'),pygame.image.load('documentos/opening9.png'),pygame.image.load('documentos/opening10.png'),pygame.image.load('documentos/opening11.png'),pygame.image.load('documentos/opening12.png'),pygame.image.load('documentos/opening13.png'),pygame.image.load('documentos/opening14.png'),pygame.image.load('documentos/opening15.png'),pygame.image.load('documentos/opening16.png'),pygame.image.load('documentos/opening17.png'),pygame.image.load('documentos/opening18.png'),pygame.image.load('documentos/opening19.png'),pygame.image.load('documentos/opening20.png'),pygame.image.load('documentos/opening21.png'),pygame.image.load('documentos/opening22.png'),pygame.image.load('documentos/opening23.png'),pygame.image.load('documentos/opening24.png'),pygame.image.load('documentos/opening25.png')]
 
         self.current_image = 0
 
-        self.image = pygame.image.load('opening1.png')
+        self.image = pygame.image.load('documentos/opening1.png')
         self.mask = pygame.mask.from_surface(self.image)
 
         self.rect = self.image.get_rect()
@@ -83,13 +83,13 @@ class Menu(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
-        self.images = [pygame.image.load('menu1.png'),
-                       pygame.image.load('menu2.png'),
-                       pygame.image.load('menu3.png')]
+        self.images = [pygame.image.load('documentos/menu1.png'),
+                       pygame.image.load('documentos/menu2.png'),
+                       pygame.image.load('documentos/menu3.png')]
         
         self.current_image = 0
 
-        self.image = pygame.image.load('menu1.png')
+        self.image = pygame.image.load('documentos/menu1.png')
         self.mask = pygame.mask.from_surface(self.image)
 
         self.rect = self.image.get_rect()
@@ -106,13 +106,13 @@ class Nave(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
-        self.images = [pygame.image.load('spaceship1.png'),
-                       pygame.image.load('spaceship2.png'),
-                       pygame.image.load('spaceship3.png')]
+        self.images = [pygame.image.load('documentos/spaceship1.png'),
+                       pygame.image.load('documentos/spaceship2.png'),
+                       pygame.image.load('documentos/spaceship3.png')]
 
         self.current_image = 0
 
-        self.image = pygame.image.load('spaceship1.png')
+        self.image = pygame.image.load('documentos/spaceship1.png')
         self.mask = pygame.mask.from_surface(self.image)
 
 
@@ -143,7 +143,7 @@ class Pipe(pygame.sprite.Sprite):
     def __init__(self, inverted, xpos, ysize):
         pygame.sprite.Sprite.__init__(self)
 
-        self.image = pygame.image.load('pipe.png').convert_alpha()
+        self.image = pygame.image.load('documentos/pipe.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (PIPE_WIDTH, PIPE_HEIGHT))
 
         self.rect = self.image.get_rect()
